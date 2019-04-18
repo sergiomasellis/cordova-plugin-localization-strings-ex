@@ -1,6 +1,10 @@
 var fs = require('fs-extra');
 var _ = require('lodash');
 xml2js = require('xml2js');
+var q = require('q');
+var deferred = q.defer();
+var path = require('path');
+var glob = require('glob');
 
 function fileExists(path) {
     try {
@@ -11,8 +15,6 @@ function fileExists(path) {
 }
 
 module.exports = function (context) {
-    var q = context.requireCordovaModule('q');
-    var deferred = q.defer();
 
     getTargetLang(context).then(function (languages) {
         var promisesToRun = [];
@@ -85,9 +87,6 @@ module.exports = function (context) {
 
 function getTargetLang(context) {
     var targetLangArr = [];
-    var deferred = context.requireCordovaModule('q').defer();
-    var path = context.requireCordovaModule('path');
-    var glob = context.requireCordovaModule('glob');
 
     glob("translations/app/*.json", function (err, langFiles) {
         if (err) {
@@ -111,8 +110,6 @@ function getTargetLang(context) {
 }
 
 function getLocalizationDir(context, lang) {
-    var path = context.requireCordovaModule('path');
-
     var langDir;
     switch (lang) {
         case "en":
@@ -126,8 +123,6 @@ function getLocalizationDir(context, lang) {
 }
 
 function getLocalStringXmlPath(context, lang) {
-    var path = context.requireCordovaModule('path');
-
     var filePath;
     switch (lang) {
         case "en":
@@ -141,7 +136,6 @@ function getLocalStringXmlPath(context, lang) {
 }
 
 function getResPath(context) {
-    var path = context.requireCordovaModule('path');
     var locations = context.requireCordovaModule('cordova-lib/src/platforms/platforms').getPlatformApi('android').locations;
 
     if (locations && locations.res) {
@@ -153,10 +147,7 @@ function getResPath(context) {
 
 // process the modified xml and put write to file
 function processResult(context, lang, langJson, stringXmlJson) {
-    var path = context.requireCordovaModule('path');
-    var q = context.requireCordovaModule('q');
-    var deferred = q.defer();
-
+    
     var mapObj = {};
     // create a map to the actual string
     _.forEach(stringXmlJson.resources.string, function (val) {

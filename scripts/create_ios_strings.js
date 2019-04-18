@@ -2,6 +2,12 @@ var fs = require('fs-extra');
 var _ = require('lodash');
 var iconv = require('iconv-lite');
 
+var path = require('path');
+var q = require('q');
+var deferred = q.defer();
+var glob = require('glob');
+var xcode = require('xcode');
+
 var iosProjFolder;
 var iosPbxProjPath;
 
@@ -85,11 +91,7 @@ function writeLocalisationFieldsToXcodeProj(filePaths, groupname, proj) {
 }
 module.exports = function(context) {
 
-    var path = context.requireCordovaModule('path');
-    var q = context.requireCordovaModule('q');
-    var deferred = q.defer();
-    var glob = context.requireCordovaModule('glob');
-    var xcode = require('xcode');
+
 
     var localizableStringsPaths = [];
     var infoPlistPaths = [];
@@ -164,9 +166,6 @@ module.exports = function(context) {
 
 function getTargetLang(context) {
     var targetLangArr = [];
-    var deferred = context.requireCordovaModule('q').defer();
-    var path = context.requireCordovaModule('path');
-    var glob = context.requireCordovaModule('glob');
 
     glob("translations/app/*.json",
         function(err, langFiles) {
